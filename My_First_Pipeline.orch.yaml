@@ -1,0 +1,363 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "Create Table"
+        - "Create Table 2"
+      parameters:
+        componentName: "Start"
+    S3 Load:
+      type: "s3-load"
+      parameters:
+        componentName: "S3 Load"
+        stage: "[Custom]"
+        authentication: "Credentials"
+        s3ObjectPrefix: "s3://rjanalytics/ACCOUNT/account_new.csv"
+        pattern: ".*"
+        encryption: "S3 Encryption"
+        warehouse: "DEMO_WAREHOUSE"
+        database: "DEMO_DATABASE"
+        schema: "DEMO_SCHEMA"
+        targetTable: "ACCOUNT"
+        loadColumns:
+        - "account_id "
+        - "district_id"
+        - "frequency"
+        - "Date "
+        - "Account_Type "
+        - "Card_Assigned "
+        format: "[Custom]"
+        fileType: "CSV"
+        compression: "AUTO"
+        recordDelimiter:
+        fieldDelimiter: ","
+        skipHeader: "1"
+        skipBlankLines: "True"
+        dateFormat:
+        timeFormat:
+        timestampFormat:
+        escape:
+        escapeUnenclosedField:
+        trimSpace: "False"
+        fieldOptionallyEnclosed:
+        nullIf:
+        errorOnColumnCountMismatch: "False"
+        emptyFieldAsNull: "True"
+        replaceInvalidCharacters: "False"
+        encodingType:
+        onError: "Abort Statement"
+        sizeLimitB:
+        purgeFiles: "False"
+        truncateColumns: "False"
+        forceLoad: "False"
+      postProcessing:
+        updateOutputMessage:
+        updateScalarVariables:
+    Create Table:
+      type: "create-table-v2"
+      transitions:
+        success:
+        - "S3 Load"
+      parameters:
+        componentName: "Create Table"
+        createMethod: "Create If Not Exists"
+        database: "DEMO_DATABASE"
+        schema: "DEMO_SCHEMA"
+        table: "ACCOUNT"
+        snowflakeTableType: "Permanent"
+        columns:
+        - - "account_id "
+          - "NUMBER"
+          - "20"
+          - ""
+          - ""
+          - "Yes"
+          - "Yes"
+          - ""
+          - ""
+        - - "district_id"
+          - "NUMBER"
+          - "20"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "frequency"
+          - "VARCHAR"
+          - "40"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "Date "
+          - "DATE"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "Account_Type "
+          - "VARCHAR"
+          - "100"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "Card_Assigned "
+          - "VARCHAR"
+          - "20"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        defaultDdlCollation:
+        primaryKeys:
+        clusteringKeys:
+        dataRetentionTimeInDays:
+        comment:
+      postProcessing:
+        updateOutputMessage:
+        updateScalarVariables:
+    Create Table 2:
+      type: "create-table-v2"
+      transitions:
+        success:
+        - "S3 Load 2"
+      parameters:
+        componentName: "Create Table 2"
+        createMethod: "Create If Not Exists"
+        database: "DEMO_DATABASE"
+        schema: "DEMO_SCHEMA"
+        table: "DISTRICT"
+        snowflakeTableType: "Permanent"
+        columns:
+        - - "District_Code"
+          - "NUMBER"
+          - "20"
+          - ""
+          - ""
+          - "No"
+          - "Yes"
+          - ""
+          - ""
+        - - "District_Name"
+          - "VARCHAR"
+          - "100"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "Region "
+          - "VARCHAR"
+          - "100"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "No_of_inhabitants"
+          - "NUMBER"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "No_of_municipalities_with_inhabitants_less_499 "
+          - "NUMBER"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "No_of_municipalities_with_inhabitants_500_btw_1999"
+          - "NUMBER"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "No_of_municipalities_with_inhabitants_2000_btw_9999"
+          - "NUMBER"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "No_of_municipalities_with_inhabitants_less_10000 "
+          - "NUMBER"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "No_of_cities"
+          - "NUMBER"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "Ratio_of_urban_inhabitants"
+          - "FLOAT"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "Average_salary"
+          - "NUMBER"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "No_of_entrepreneurs_per_1000_inhabitants "
+          - "NUMBER"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "No_committed_crime_2017"
+          - "NUMBER"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "No_committed_crime_2018 "
+          - "NUMBER"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        defaultDdlCollation:
+        primaryKeys:
+        clusteringKeys:
+        dataRetentionTimeInDays:
+        comment:
+      postProcessing:
+        updateOutputMessage:
+        updateScalarVariables:
+    S3 Load 2:
+      type: "s3-load"
+      parameters:
+        componentName: "S3 Load 2"
+        stage: "[Custom]"
+        authentication: "Credentials"
+        s3ObjectPrefix: "s3://rjanalytics/DISTRICT/district.csv"
+        pattern: ".*"
+        encryption: "S3 Encryption"
+        warehouse: "DEMO_WAREHOUSE"
+        database: "DEMO_DATABASE"
+        schema: "DEMO_SCHEMA"
+        targetTable: "DISTRICT"
+        loadColumns:
+        - "District_Code"
+        - "District_Name"
+        - "Region "
+        - "No_of_inhabitants"
+        - "No_of_municipalities_with_inhabitants_less_499 "
+        - "No_of_municipalities_with_inhabitants_500_btw_1999"
+        - "No_of_municipalities_with_inhabitants_2000_btw_9999"
+        - "No_of_entrepreneurs_per_1000_inhabitants "
+        - "No_of_cities"
+        - "Ratio_of_urban_inhabitants"
+        - "Average_salary"
+        - "No_of_municipalities_with_inhabitants_less_10000 "
+        - "No_committed_crime_2017"
+        - "No_committed_crime_2018 "
+        format: "[Custom]"
+        fileType: "CSV"
+        compression: "AUTO"
+        recordDelimiter:
+        fieldDelimiter: ","
+        skipHeader: "1"
+        skipBlankLines: "True"
+        dateFormat:
+        timeFormat:
+        timestampFormat:
+        escape:
+        escapeUnenclosedField:
+        trimSpace: "False"
+        fieldOptionallyEnclosed:
+        nullIf:
+        errorOnColumnCountMismatch: "False"
+        emptyFieldAsNull: "True"
+        replaceInvalidCharacters: "False"
+        encodingType:
+        onError: "Abort Statement"
+        sizeLimitB:
+        purgeFiles: "False"
+        truncateColumns: "False"
+        forceLoad: "False"
+      postProcessing:
+        updateOutputMessage:
+        updateScalarVariables:
+design:
+  components:
+    Start:
+      position:
+        x: -200
+        "y": -50
+      tempMetlId: 1
+    S3 Load:
+      position:
+        x: 50
+        "y": -50
+      tempMetlId: 3
+    Create Table:
+      position:
+        x: -80
+        "y": -50
+      tempMetlId: 4
+    Create Table 2:
+      position:
+        x: -80
+        "y": 60
+      tempMetlId: 5
+    S3 Load 2:
+      position:
+        x: 50
+        "y": 60
+      tempMetlId: 6
